@@ -1,0 +1,191 @@
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+/*
+ *	Directions: extend the Block class to use the Block methods
+ *
+ *				Override the paint method to draw a Ball
+ *				
+ *				Make an xspeed and a yspeed instance variable in order to make the ball bounce
+ *				
+ *				Create a Ball constructor, using the Paddle constructor as an example, it can still take
+ *				in just one speed, then set both instance variables to that one speed.
+ *				
+ *				Create a bounce method that keeps the ball on the screen but bounces around the screen.
+ *				Do NOT test if the ball is touching the bricks or the paddle in this method, you will do that
+ *				in the game logic in BreakOut.java.
+ *
+ *				Go to BreakOut and do Step 2 and test it in the runner.
+ *
+ *				If all works then move on to Brick
+ *				
+ */
+
+class Ball extends Block
+{
+	private int xspeed;
+    private int yspeed;
+	
+    public Ball(int ex, int wy, int wd, int ht, int s){
+        super(ex, wy, wd, ht);
+        xspeed = s;
+        yspeed = s;
+    }
+
+    public int getXspeed(){
+        return xspeed;
+    }
+
+    public int getYspeed(){
+        return yspeed;
+    }
+
+    public void setXspeed(int xs){
+        xspeed = xs;
+    }
+
+    public void setYspeed(int ys){
+        yspeed = ys;
+    }
+
+    public void bounce(){
+
+        setX(getX()-xspeed);
+        setY(getY()-yspeed);
+
+        if(intersects())
+    }
+
+    public void paint(Graphics window){
+
+        window.setColor(Color.BLUE);
+        window.fillOval(getX(), getY(), getW(), getH());
+        window.setColor(Color.BLACK);
+        window.drawOval(getX(), getY(), getW(), getH());
+
+        Graphics2D g = (Graphics2D) window;
+        Image img = Toolkit.getDefaultToolkit().getImage("mushroom.png");
+        g.drawImage(img, getX(), getY(), getW(), getH(), this);
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
+import javax.swing.*;
+abstract class Block extends Canvas
+{
+	private int x, y, w, h; //these are instance variables
+	public Block( int ex, int wy, int wd, int ht)
+	{
+		//write the Block constructor
+		x = ex;
+		y = wy;
+		w = wd;
+		h = ht;
+	}
+	public int getX( ){ return x; }
+	public void setX( int ex ){ x = ex; }
+	public int getY( ){ return y; }
+	public void setY( int wy ){ y = wy; }
+	public int getW(){ return w; }
+	public int getH(){ return h; }
+	public boolean intersects( Block other )
+	{
+		Rectangle a = new Rectangle(x, y, w, h);
+		Rectangle b = new Rectangle(other.getX(), other.getY(), other.getW(), other.getH());
+		if(a.intersects(b)){
+			return true;
+		}
+		return false;
+	}
+}
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+/*
+ *	Directions: 
+ *				Make the brick extend Block
+ *
+ *				Write the Brick constructor that takes an x, y, w, h to create a block.
+ *
+ *				Override the paint method to draw a Brick
+
+				Choose to draw or import an image.
+ *
+ *				Go to BreakOut and do Step 3, then test in the runner.
+ *
+ *				If all works correctly then move on to Steps 4 - 6 in BreakOut.
+ */ 
+ 
+class Brick extends Block
+{
+	public Brick(int ex, int wy, int wd, int ht){
+        super(ex, wy, wd, ht);
+    }
+
+    public void paint (Graphics window){
+
+        window.setColor(Color.red);
+        window.fillRect(getX(), getY(), getW(), getH());
+
+        //Graphics2D g = (Graphics2D) window;
+        //Image img = Toolkit.getDefaultToolkit().getImage("Maroon.png");
+        //g.drawImage(img, getX(), getY(), getW(), getH(), this);
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.util.ArrayList;
+
+public class PacMap extends JPanel{
+    private ArrayList<Brick> bricks;
+
+    public PacMap() {
+        bricks = new ArrayList<>();
+        bricks.add(new Brick(0,0,1,1002));
+        bricks.add(new Brick(0,0,901,1));
+        bricks.add(new Brick(0,991,901,1));
+        bricks.add(new Brick(894,0,1,1002));
+
+    }
+    public void paintComponent( Graphics window )
+    {
+        Graphics2D g2 = (Graphics2D) window;
+        Image img1 = Toolkit.getDefaultToolkit().getImage("PacMap.png"); /*the image cannot be in the SRC folder*/
+        g2.drawImage(img1, 0 , 0 , 902 , 1002, this);
+
+        for(Brick p : bricks){
+            p.paint(window);
+        }
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+import javax.swing.*;
+public class BackgroundRunner extends JFrame
+{
+	private static final int WIDTH = 911;
+	private static final int HEIGHT = 1031;
+	public BackgroundRunner()
+	{
+		super("Pac-Man");
+		setSize(WIDTH,HEIGHT);
+
+		getContentPane().add(new PacMap());
+
+		setVisible(true);
+
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	public static void main(String args[])
+	{
+		BackgroundRunner run = new BackgroundRunner();
+	}
+}
