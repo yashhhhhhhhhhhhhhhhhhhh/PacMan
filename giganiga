@@ -1,0 +1,615 @@
+//import java.awt.*;
+//import java.util.*;
+//import java.awt.event.*;
+//import javax.swing.*;
+//
+//
+///*
+// *		Directions: Follow the directions in order.
+// *		(1) Paddle
+// *			(1A) Make the paddle show up on the screen
+// *			(1B) Make the paddle move
+// *		(2) Ball
+// *			(2A) Make the ball show up on the screen
+// *			(2B) Make the ball bounce after you press the space bar
+// *		(3) Make the bricks work
+// *			(3A) Initialize the list of bricks
+// *			(3B) add bricks to the list
+// *			(3C) make the bricks show up on the screen
+// *		(4) make the ball bounce off the paddle
+// *		(5) make the ball bounce off the bricks
+// *		(6) remove the bricks that get hit by the ball
+// *		Test after each step.
+// *
+// *		Add methods, constructors, instance variables anywhere that is needed
+// *		to enhance the game.
+// *
+// *		To get full credit you need to add two more features that are not included.
+// */
+//
+//class BreakOut extends JPanel implements Runnable, KeyListener
+//{
+//		private boolean[] keys; // this stores booleans for when a key is pressed or not.
+//
+//		private Paddle pad;	// this is the paddle that moves across the bottom of the screen
+//
+//		private Ball ball; // this is the ball that bounces around the screen
+//
+//		private ArrayList< Brick > bricks; // this is the list of bricks that are to be drawn on the screen
+//
+//	public BreakOut() // create all instance in here
+//	{
+//		setBackground(Color.WHITE);
+//
+//		//make the keys array big enough to store all keys pressed
+//		keys = new boolean[3];		// scroll down to see the keyPressed method
+//
+//		pad = new Paddle( 0, 550, 200, 30, 100); /* (1A) initialize the Paddle, put the paddle close to the bottom of the screen. */
+//
+//		/* (2A) initialize the Ball, put the ball on the paddle. */
+//
+//		ball = new Ball(125, 510, 40, 40, 5);
+//
+//		/* (3A)initialize the ArrayList<Brick> */
+//
+//		bricks = new ArrayList<>();
+//
+//		/* (3B) make a for loop to add Bricks to your ArrayList< Brick >
+//		 * 		bricks.add( new Brick( x, y , w, h ) );
+//		 * 		each brick will need to have different x & y coordinates, but same width and height
+//		 * 		the x & y coordinates should be based on the width and height you choose
+//		 */
+//
+//		//r1
+//		for(int x=0; x<=720; x+=90){
+//			bricks.add(new Brick(x, 0, 90, 90));
+//		}
+//
+//		//r2
+//		for(int x=0; x<=720; x+=90){
+//			bricks.add(new Brick(x, 90, 90, 90));
+//		}
+//
+//		//r3
+//		for(int x=0; x<=720; x+=90){
+//			bricks.add(new Brick(x, 180, 90, 90));
+//		}
+//
+//		addKeyListener( this );   	//
+//		setFocusable( true );		// Do NOT DELETE these three lines
+//		new Thread(this).start();	//
+//	}
+//
+//	public void paint( Graphics window )// all other paint methods and game logic goes in here.
+//	{
+////		window.setColor(Color.WHITE); window.fillRect( 0,0, 800, 600); // makes the background white
+////		window.setColor(Color.BLACK); window.drawRect( 0,0, 800, 600); // draws a black box around the outside
+//
+//		window.setColor(new Color(182, 122, 91)); window.fillRect( 0,0, 800, 600);
+//		window.setColor(Color.BLACK); window.drawRect( 0,0, 800, 600);
+//
+//		Graphics2D bckgr = (Graphics2D) window;
+//		Image imgb = Toolkit.getDefaultToolkit().getImage("background.jpg");
+//		bckgr.drawImage(imgb, getX(), getY(),this);
+//
+////		window.setColor(Color.BLUE); // to change fonts, color, etc: go to the Graphics Intro Folder
+////		window.drawString("Mouse  coordinates " + "(" + MouseInfo.getPointerInfo().getLocation().x + "   " + MouseInfo.getPointerInfo().getLocation().y + ")", 250, 30 );
+//
+//		pad.paint( window );   //(1A) paints the paddle
+//
+//		/* (2A)  paint the ball */
+//
+//		ball.paint(window);
+//
+//		/* (3C) paint the bricks, must use a loop to paint each brick individually */
+//
+//		for(Brick b : bricks){
+//			b.paint(window);
+//		}
+//
+//		if(keys[0]) // space is pressed
+//		{
+//			/* (2B) make the ball bounce, this runs after you press the space bar */
+//
+//			ball.bounce();
+//
+//		}
+//		if(keys[1]) // Left Arrow is pressed
+//		{
+//			/* (1B) move paddle left */
+//
+//			pad.goLeft();
+//
+//			keys[1] = false;
+//		}
+//		if(keys[2]) // Right Arrow is pressed
+//		{
+//			/*(1B) move paddle right */
+//
+//			pad.goRight();
+//
+//			keys[2] = false;
+//		}
+//
+//		/* (4) test if the ball is hitting the paddle, make the ball bounce off */
+//
+//		if(ball.intersects(pad)){
+//			ball.setYspeed(ball.getYspeed()*-1);
+//		}
+//
+//		/* (5) test if the ball is hitting a brick, make the ball bounce off */
+//		/* (6) then remove the brick that got hit */
+//
+//		for(int x=0; x<bricks.size(); x++){
+//			if(ball.intersects(bricks.get(x))){
+//				bricks.remove(bricks.get(x));
+//				ball.setYspeed(ball.getYspeed()*-1);
+//			}
+//		}
+//
+//		//win
+//		if(bricks.size()==0){
+//			Graphics g = (Graphics2D) window;
+//			g.setColor(Color.BLUE);
+//			g.setFont(new Font("LucidaSans", Font.BOLD, 40));
+//			g.drawString("YOU WIN", 290, 350);
+//		}
+//
+//		//lose
+//		if(ball.getY()>=550){
+//			Graphics g = (Graphics2D) window;
+//			g.setColor(Color.RED);
+//			g.setFont(new Font("LucidaSans", Font.BOLD, 40));
+//			g.drawString("YOU LOSE", 280, 350);
+//		}
+//	}
+//
+//
+//// only edit if you would like to add more key functions
+//	public void keyPressed(KeyEvent e)
+//	{
+//		//Java KeyEvent docs
+//		//https://docs.oracle.com/javase/8/docs/api/java/awt/event/KeyEvent.html
+//
+//		if( e.getKeyCode()  == KeyEvent.VK_SPACE )
+//		{
+//			keys[0]=true;
+//		}
+//
+//		if( e.getKeyCode()  == KeyEvent.VK_LEFT )
+//		{
+//			keys[1]=true;
+//		}
+//
+//		if( e.getKeyCode()  == KeyEvent.VK_RIGHT )
+//		{
+//			keys[2]=true;
+//		}
+//	}
+///*****~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*****/
+//// do not edit anything from this point on!!!
+//	public void keyTyped(KeyEvent e)
+//	{
+//		keyPressed( e );
+//	}
+//	public void keyReleased(KeyEvent e)
+//	{
+//
+//	}
+//
+//	public void run()
+//	{
+//		try
+//		{
+//			while( true )
+//			{
+//			   Thread.sleep( 10 );
+//			   repaint();
+//			}
+//		}
+//		catch( Exception e )
+//		{
+//		}
+//	}
+//}
+-------------------------------------------------------------------------------------------------------------------------
+
+import java.awt.Graphics;
+import java.awt.Color;
+import javax.swing.*;
+import java.awt.event.*;
+import java.util.*;
+import java.awt.MouseInfo;
+
+public class pc extends JPanel implements Runnable, KeyListener
+{
+	private List<Box> stuff;
+
+	public pc()
+	{
+		setBackground(Color.WHITE);
+
+		new Thread(this).start();
+	}
+
+	public void paint( Graphics window )
+	{
+		window.setColor(Color.BLACK);
+		window.fillRect( 0,0, 800, 600);
+		window.setColor(Color.WHITE);
+		window.drawString("Mouse  coordinates " + "(" + MouseInfo.getPointerInfo().getLocation().x + "   " + MouseInfo.getPointerInfo().getLocation().y + ")", 250, 30 );
+	}
+	public void keyPressed(KeyEvent e)
+	{
+		//Java KeyEvent docs
+		//https://docs.oracle.com/javase/8/docs/api/java/awt/event/KeyEvent.html
+
+	}
+	public void keyTyped(KeyEvent e) {
+		keyPressed(e);
+	}
+	public void keyReleased(KeyEvent e) {
+		keyReleased(e);
+	}
+
+	public void run()
+	{
+		try
+		{
+			while( true )
+			{
+			   Thread.sleep(50);
+			   repaint();
+			}
+		}
+		catch( Exception e )
+		{
+
+		}
+	}
+}
+
+-------------------------------------------------------------------------------------------------------------------------
+
+//import java.awt.*;
+//import java.util.*;
+//import java.awt.event.*;
+//import javax.swing.*;
+//
+//
+///*
+// *		Directions: Follow the directions in order.
+// *		(1) Paddle
+// *			(1A) Make the paddle show up on the screen
+// *			(1B) Make the paddle move
+// *		(2) Ball
+// *			(2A) Make the ball show up on the screen
+// *			(2B) Make the ball bounce after you press the space bar
+// *		(3) Make the bricks work
+// *			(3A) Initialize the list of bricks
+// *			(3B) add bricks to the list
+// *			(3C) make the bricks show up on the screen
+// *		(4) make the ball bounce off the paddle
+// *		(5) make the ball bounce off the bricks
+// *		(6) remove the bricks that get hit by the ball
+// *		Test after each step.
+// *
+// *		Add methods, constructors, instance variables anywhere that is needed
+// *		to enhance the game.
+// *
+// *		To get full credit you need to add two more features that are not included.
+// */
+//
+//class BreakOut extends JPanel implements Runnable, KeyListener
+//{
+//		private boolean[] keys; // this stores booleans for when a key is pressed or not.
+//
+//		private Paddle pad;	// this is the paddle that moves across the bottom of the screen
+//
+//		private Ball ball; // this is the ball that bounces around the screen
+//
+//		private ArrayList< Brick > bricks; // this is the list of bricks that are to be drawn on the screen
+//
+//	public BreakOut() // create all instance in here
+//	{
+//		setBackground(Color.WHITE);
+//
+//		//make the keys array big enough to store all keys pressed
+//		keys = new boolean[3];		// scroll down to see the keyPressed method
+//
+//		pad = new Paddle( 0, 550, 200, 30, 100); /* (1A) initialize the Paddle, put the paddle close to the bottom of the screen. */
+//
+//		/* (2A) initialize the Ball, put the ball on the paddle. */
+//
+//		ball = new Ball(125, 510, 40, 40, 5);
+//
+//		/* (3A)initialize the ArrayList<Brick> */
+//
+//		bricks = new ArrayList<>();
+//
+//		/* (3B) make a for loop to add Bricks to your ArrayList< Brick >
+//		 * 		bricks.add( new Brick( x, y , w, h ) );
+//		 * 		each brick will need to have different x & y coordinates, but same width and height
+//		 * 		the x & y coordinates should be based on the width and height you choose
+//		 */
+//
+//		//r1
+//		for(int x=0; x<=720; x+=90){
+//			bricks.add(new Brick(x, 0, 90, 90));
+//		}
+//
+//		//r2
+//		for(int x=0; x<=720; x+=90){
+//			bricks.add(new Brick(x, 90, 90, 90));
+//		}
+//
+//		//r3
+//		for(int x=0; x<=720; x+=90){
+//			bricks.add(new Brick(x, 180, 90, 90));
+//		}
+//
+//		addKeyListener( this );   	//
+//		setFocusable( true );		// Do NOT DELETE these three lines
+//		new Thread(this).start();	//
+//	}
+//
+//	public void paint( Graphics window )// all other paint methods and game logic goes in here.
+//	{
+////		window.setColor(Color.WHITE); window.fillRect( 0,0, 800, 600); // makes the background white
+////		window.setColor(Color.BLACK); window.drawRect( 0,0, 800, 600); // draws a black box around the outside
+//
+//		window.setColor(new Color(182, 122, 91)); window.fillRect( 0,0, 800, 600);
+//		window.setColor(Color.BLACK); window.drawRect( 0,0, 800, 600);
+//
+//		Graphics2D bckgr = (Graphics2D) window;
+//		Image imgb = Toolkit.getDefaultToolkit().getImage("background.jpg");
+//		bckgr.drawImage(imgb, getX(), getY(),this);
+//
+////		window.setColor(Color.BLUE); // to change fonts, color, etc: go to the Graphics Intro Folder
+////		window.drawString("Mouse  coordinates " + "(" + MouseInfo.getPointerInfo().getLocation().x + "   " + MouseInfo.getPointerInfo().getLocation().y + ")", 250, 30 );
+//
+//		pad.paint( window );   //(1A) paints the paddle
+//
+//		/* (2A)  paint the ball */
+//
+//		ball.paint(window);
+//
+//		/* (3C) paint the bricks, must use a loop to paint each brick individually */
+//
+//		for(Brick b : bricks){
+//			b.paint(window);
+//		}
+//
+//		if(keys[0]) // space is pressed
+//		{
+//			/* (2B) make the ball bounce, this runs after you press the space bar */
+//
+//			ball.bounce();
+//
+//		}
+//		if(keys[1]) // Left Arrow is pressed
+//		{
+//			/* (1B) move paddle left */
+//
+//			pad.goLeft();
+//
+//			keys[1] = false;
+//		}
+//		if(keys[2]) // Right Arrow is pressed
+//		{
+//			/*(1B) move paddle right */
+//
+//			pad.goRight();
+//
+//			keys[2] = false;
+//		}
+//
+//		/* (4) test if the ball is hitting the paddle, make the ball bounce off */
+//
+//		if(ball.intersects(pad)){
+//			ball.setYspeed(ball.getYspeed()*-1);
+//		}
+//
+//		/* (5) test if the ball is hitting a brick, make the ball bounce off */
+//		/* (6) then remove the brick that got hit */
+//
+//		for(int x=0; x<bricks.size(); x++){
+//			if(ball.intersects(bricks.get(x))){
+//				bricks.remove(bricks.get(x));
+//				ball.setYspeed(ball.getYspeed()*-1);
+//			}
+//		}
+//
+//		//win
+//		if(bricks.size()==0){
+//			Graphics g = (Graphics2D) window;
+//			g.setColor(Color.BLUE);
+//			g.setFont(new Font("LucidaSans", Font.BOLD, 40));
+//			g.drawString("YOU WIN", 290, 350);
+//		}
+//
+//		//lose
+//		if(ball.getY()>=550){
+//			Graphics g = (Graphics2D) window;
+//			g.setColor(Color.RED);
+//			g.setFont(new Font("LucidaSans", Font.BOLD, 40));
+//			g.drawString("YOU LOSE", 280, 350);
+//		}
+//	}
+//
+//
+//// only edit if you would like to add more key functions
+//	public void keyPressed(KeyEvent e)
+//	{
+//		//Java KeyEvent docs
+//		//https://docs.oracle.com/javase/8/docs/api/java/awt/event/KeyEvent.html
+//
+//		if( e.getKeyCode()  == KeyEvent.VK_SPACE )
+//		{
+//			keys[0]=true;
+//		}
+//
+//		if( e.getKeyCode()  == KeyEvent.VK_LEFT )
+//		{
+//			keys[1]=true;
+//		}
+//
+//		if( e.getKeyCode()  == KeyEvent.VK_RIGHT )
+//		{
+//			keys[2]=true;
+//		}
+//	}
+///*****~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*****/
+//// do not edit anything from this point on!!!
+//	public void keyTyped(KeyEvent e)
+//	{
+//		keyPressed( e );
+//	}
+//	public void keyReleased(KeyEvent e)
+//	{
+//
+//	}
+//
+//	public void run()
+//	{
+//		try
+//		{
+//			while( true )
+//			{
+//			   Thread.sleep( 10 );
+//			   repaint();
+//			}
+//		}
+//		catch( Exception e )
+//		{
+//		}
+//	}
+//}
+
+-------------------------------------------------------------------------------------------------------------------------
+
+//import java.awt.*;
+//import java.util.*;
+//import java.awt.event.*;
+//import javax.swing.*;
+//
+///*
+// *	Directions:
+// *				In the paint method Choose if you want to draw your paddle or
+// *				if you want to use an image to make a paddle.
+// *
+// *				Finish the goLeft & goRight methods
+// *
+// *				Go to BreakOut and do Step 1.
+// *				Then test it out in the runner.
+// *				If all of the paddle works move on to Ball
+// */
+//
+//
+//class Paddle extends Block
+//{
+//	private int speed; // a paddle has to have a speed to make it move
+//
+//	public Paddle( int ex, int wy, int wd, int ht, int sp)
+//	{
+//		//write the code for the Paddle constructor
+//		//must have a super constructor call
+//
+//		super(ex, wy, wd, ht);
+//		speed = sp;
+//
+//	}
+//
+//	public void goLeft()
+//	{
+//	  setX( getX() - speed ); // because a paddle is a block it has the setX and getX methods
+//
+//	  // add the code to keep the paddle from going off the screen to the left.
+//
+//		if(getX()<0){
+//			setX(0);
+//		}
+//	}
+//
+//	public void goRight()
+//	{
+//	  //add code to move to the right
+//
+//		setX(getX()+speed);
+//
+//	  // keep the paddle from going off the screen to the right.
+//
+//		if(getX()>600){
+//			setX(600);
+//		}
+//	}
+//
+//	//overidde paint to draw your Paddle
+//	public void paint( Graphics window )
+//	{
+//
+//		// drawing methods for Java:
+//		// go to the Graphics Intro Folder
+//
+//		window.setColor(Color.RED);
+//		window.fillRect(getX(), getY(), getW(), getH());
+//		window.setColor(Color.BLACK);
+//		window.drawRect(getX(), getY(), getW(), getH());
+//
+//		//find and image for your paddle and put it here
+//
+////    		Graphics2D g2 = (Graphics2D) window;
+////    		Image img1 = Toolkit.getDefaultToolkit().getImage("retroPaddle.png"); //use .gif or .png, you can choose the image
+////    		g2.drawImage(img1, getX(), getY(), getW(), getH(), this);
+//
+//	}
+//}
+
+-------------------------------------------------------------------------------------------------------------------------
+
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+abstract class Block extends Canvas
+{
+	private int x, y, w, h;
+
+	public Block( int ex, int wy, int wd, int ht)
+	{
+		//write the Block constructor
+		x = ex;
+		y = wy;
+		w = wd;
+		h = ht;
+	}
+	
+	public int getX( ){ return x; }
+	public void setX( int ex ){ x = ex; }
+	public int getY( ){ return y; }
+	public void setY( int wy ){ y = wy; }
+	public int getW(){ return w; }
+	public int getH(){ return h; }
+	
+	
+	public boolean intersects( Block other )
+	{
+		/*
+		 * 		Copy and Paste the following URL in google chrome
+		 *		https://docs.oracle.com/javase/8/docs/api/java/awt/Rectangle.html
+		 *		make new Rectangle, using this Block's x,y,w,h
+		 *		make new Rectangle, using the other Block's x,y,w,h
+		 *		return if the two rectangles intersect, use the Rectangle's intersects method.
+		 */
+
+		Rectangle a = new Rectangle(x, y, w, h);
+		Rectangle b = new Rectangle(other.getX(), other.getY(), other.getW(), other.getH());
+		if(a.intersects(b)){
+			return true;
+		}
+		return false;
+	}
+}
+-------------------------------------------------------------------------------------------------------------------------
+NIGAGA
