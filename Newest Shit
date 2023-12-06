@@ -1,0 +1,355 @@
+import javax.swing.*;
+public class BackgroundRunner extends JFrame
+{
+	private static final int WIDTH = 911;
+	private static final int HEIGHT = 1031;
+	public BackgroundRunner()
+	{
+		super("Pac-Man");
+		setSize(WIDTH,HEIGHT);
+
+		getContentPane().add(new PacMap());
+
+		setVisible(true);
+
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	public static void main(String args[])
+	{
+		BackgroundRunner run = new BackgroundRunner();
+	}
+}
+------------------------------------------------------------------------------
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.image.ImageObserver;
+import java.util.ArrayList;
+
+public class PacMap extends JPanel implements Runnable , MouseListener, MouseMotionListener {
+    private Ball ball;
+    private int mouse_x, mouse_y;
+    private ArrayList<Bob> bobs;
+    private ArrayList<Brick> bricks;
+
+    public PacMap() {
+        ball = new Ball(284, 637,30, 30, 100);
+        mouse_x = 0;
+        mouse_y = 0;
+        bobs = new ArrayList<Bob>();
+        bricks = new ArrayList<>();
+        addMouseListener(this); /*YOU MUST have this in the constructor of a MouseListener*/
+        addMouseMotionListener(this); /*YOU MUST have this in the constructor of a MouseMotionListener*/
+        new Thread(this).start();
+    }
+    public void paintComponent( Graphics window )
+    {
+        Graphics2D g2 = (Graphics2D) window;
+        Image img1 = Toolkit.getDefaultToolkit().getImage("PacMap.png"); /*the image cannot be in the SRC folder*/
+        g2.drawImage(img1, 0 , 0 , 902 , 1002, this);
+
+        window.setColor(Color.RED);
+        window.drawString("Mouse  coordinates " + "(" + mouse_x + "   " + mouse_y + ")", 250, 50 );
+
+        /*This makes a new Bob on the mouse cursor*/
+        Bob b = new Bob(mouse_x, mouse_y, 50, 50);
+        /*This paints the bob on the mouse cursor*/
+        b.paintComponent(window);
+
+        ball.paint(window);
+        ball.bounce();
+
+        if(ball.getX()<=0){
+            ball.setXspeed(ball.getXspeed()*-1);
+        }
+        if(ball.getY()<=20){
+            ball.setYspeed(ball.getYspeed()*-1);
+        }
+        if(ball.getX()>=860){
+            ball.setXspeed(ball.getXspeed()*-1);
+        }
+        if(ball.getY()>=950){
+            ball.setYspeed(ball.getYspeed()*-1);
+        }
+
+        bricks.add(new Brick(80,80,100,65));
+        for(int i=0; i<bricks.size(); i++){
+            bricks.get(i).paint(window);
+            if(bricks.get(i).intersects(ball)){
+                ball.bounce();
+            }
+        }
+    }
+
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    public void mouseMoved(MouseEvent e){
+        mouse_x = e.getX(); /*this updates the X coordinate of the mouse*/
+        mouse_y = e.getY(); /*this updates the Y coordinate of the mouse*/
+    }
+
+    public void run()
+    {
+
+        try
+        {
+            while( true )
+            {
+                Thread.sleep(20);
+                repaint();
+            }
+        }
+        catch( Exception e )
+        {
+
+        }
+
+    }
+}
+-------------------------------------------------------------------
+import javax.swing.*;
+import java.util.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener; /*You must import this in your mouseListener!*/
+import java.awt.event.MouseMotionListener; 
+
+public class MouseBob extends JPanel implements Runnable ,MouseListener, MouseMotionListener
+{
+
+	private int mouse_x, mouse_y; /*these will store the location of Mouse cursor, with respect to the window, not the screen */
+	private String mouse_button; /*this will store which button is clicked*/
+	
+	private ArrayList<Bob> bobs;/*This is where we are going to put the Bobs*/
+	
+	public MouseBob ()
+	{
+		
+		mouse_x = 0;
+		mouse_y = 0;
+		mouse_button = "NO BUTTON CLICKED!";
+		bobs = new ArrayList<Bob>();
+		
+		
+		
+		addMouseListener(this); /*YOU MUST have this in the constructor of a MouseListener*/
+		addMouseMotionListener(this); /*YOU MUST have this in the constructor of a MouseMotionListener*/
+		new Thread(this).start(); /*You have to start a new Thread in a Runnable */
+	}
+
+	public void paintComponent( Graphics window )
+	{
+		
+		window.setColor(Color.WHITE);
+		window.drawString("Mouse  coordinates " + "(" + MouseInfo.getPointerInfo().getLocation().x + "   " + MouseInfo.getPointerInfo().getLocation().y + ")", 250, 30 );
+		
+		window.setColor(Color.RED);
+		window.drawString("Mouse  coordinates " + "(" + mouse_x + "   " + mouse_y + ")", 250, 50 );
+      
+		window.setColor(Color.green);
+		window.drawString(mouse_button, 250, 70 );
+		
+		/*This makes a new Bob on the mouse cursor*/
+		Bob b = new Bob(mouse_x, mouse_y, 50, 50);
+		/*This paints the bob on the mouse cursor*/
+		b.paintComponent(window);
+		
+		
+	}
+	
+	/*You MUST have these 5 methods in a MouseListener */
+		
+		/*1 mousePressed -- when mouse button is pressed*/
+		public void mousePressed(MouseEvent e) { }
+		/*2 mouseReleased -- when mouse button is released*/
+		public void mouseReleased(MouseEvent e) { }
+		/*3 mouseEntered -- when the mouse enters the window */
+		public void mouseEntered(MouseEvent e) { }
+		/*4 mouseExited -- when the mouse exits the window*/
+		public void mouseExited(MouseEvent e) { }
+		/*5 mouseClicked -- when the mouse button is pressed and released*/
+		public void mouseClicked(MouseEvent e) { 
+			
+			if( e.getButton() == 1) {
+				mouse_button = "LEFT CLICK";
+				/* add a Bob to the list at this location */
+				
+			}
+			else if( e.getButton() == 3) {
+				mouse_button = "RIGHT CLICK";
+			}
+			
+			/*Write the code to remove the clicked on Bobs*/
+				
+		}
+	
+	/*You MUST have these 2 methods in a MouseMotionListener*/
+		/*1 mouseDragged -- when a mouse button is pressed and held down and moved*/
+		public void mouseDragged(MouseEvent e){  }
+		/*2 mouseMoved -- when mouse cursor is moved around the window*/
+		public void mouseMoved(MouseEvent e){  		
+	    	mouse_x = e.getX(); /*this updates the X coordinate of the mouse*/
+	    	mouse_y = e.getY(); /*this updates the Y coordinate of the mouse*/
+	    }
+	
+	/*This method must be in a Runnable object*/
+	public void run()
+	{
+
+		try
+		{
+			while( true )
+			{	
+			   Thread.sleep(20);
+			   repaint();
+			}
+		}
+		catch( Exception e )
+		{
+			
+		}
+
+	}
+}
+---------------------------------------------
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
+import javax.swing.*;
+class Ball extends Block
+{
+    private int xspeed;
+    private int yspeed;
+
+    public Ball(int ex, int wy, int wd, int ht, int s){
+        super(ex, wy, wd, ht);
+        xspeed = s;
+        yspeed = s;
+    }
+
+    public int getXspeed(){
+        return xspeed;
+    }
+
+    public int getYspeed(){
+        return yspeed;
+    }
+
+    public void setXspeed(int xs){
+        xspeed = xs;
+    }
+
+    public void setYspeed(int ys){
+        yspeed = ys;
+    }
+
+    public void bounce(){
+        setX(getX()-xspeed);
+        setY(getY()-yspeed);
+    }
+
+    public void paint(Graphics window){
+
+        window.setColor(Color.BLUE);
+        window.fillOval(getX(), getY(), getW(), getH());
+        window.setColor(Color.BLACK);
+        window.drawOval(getX(), getY(), getW(), getH());
+    }
+}
+---------------------------------------------------------------------------------------------
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+/*
+ *	Directions: 
+ *				Make the brick extend Block
+ *
+ *				Write the Brick constructor that takes an x, y, w, h to create a block.
+ *
+ *				Override the paint method to draw a Brick
+
+				Choose to draw or import an image.
+ *
+ *				Go to BreakOut and do Step 3, then test in the runner.
+ *
+ *				If all works correctly then move on to Steps 4 - 6 in BreakOut.
+ */ 
+ 
+class Brick extends Block
+{
+	public Brick(int ex, int wy, int wd, int ht){
+        super(ex, wy, wd, ht);
+    }
+
+    public void paint (Graphics window){
+
+        window.setColor(Color.red);
+        window.drawRect(getX(), getY(), getW(), getH());
+
+        //Graphics2D g = (Graphics2D) window;
+        //Image img = Toolkit.getDefaultToolkit().getImage("Maroon.png");
+        //g.drawImage(img, getX(), getY(), getW(), getH(), this);
+    }
+}
+------------------------------------------------------------------
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
+import javax.swing.*;
+abstract class Block extends Canvas
+{
+	private int x, y, w, h; //these are instance variables
+	public Block( int ex, int wy, int wd, int ht)
+	{
+		//write the Block constructor
+		x = ex;
+		y = wy;
+		w = wd;
+		h = ht;
+	}
+	public int getX( ){ return x; }
+	public void setX( int ex ){ x = ex; }
+	public int getY( ){ return y; }
+	public void setY( int wy ){ y = wy; }
+	public int getW(){ return w; }
+	public int getH(){ return h; }
+	public boolean intersects( Ball other )
+	{
+		Rectangle a = new Rectangle(x, y, w, h);
+		Ball b = new Ball(other.getX(), other.getY(), other.getW(), other.getH(), other.getXspeed());
+		if(a.getX()==b.getX() || a.getY()==b.getY()){
+			return true;
+		}
+		return false;
+	}
+}
