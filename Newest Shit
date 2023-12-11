@@ -51,35 +51,30 @@ public class PacMap extends JPanel implements Runnable , MouseListener, MouseMot
         g2.drawImage(img1, 0 , 0 , 902 , 1002, this);
 
         window.setColor(Color.RED);
-        window.drawString("Mouse  coordinates " + "(" + mouse_x + "   " + mouse_y + ")", 250, 50 );
+        window.drawString("Mouse  coordinates " + "(" + mouse_x + "   " + mouse_y + ")", 250, 30 );
 
         /*This makes a new Bob on the mouse cursor*/
         Bob b = new Bob(mouse_x, mouse_y, 50, 50);
         /*This paints the bob on the mouse cursor*/
         b.paintComponent(window);
 
-        ball.paint(window);
-        ball.bounce();
-
-        if(ball.getX()<=0){
-            ball.setXspeed(ball.getXspeed()*-1);
-        }
-        if(ball.getY()<=20){
-            ball.setYspeed(ball.getYspeed()*-1);
-        }
-        if(ball.getX()>=860){
-            ball.setXspeed(ball.getXspeed()*-1);
-        }
-        if(ball.getY()>=950){
-            ball.setYspeed(ball.getYspeed()*-1);
-        }
-
         bricks.add(new Brick(80,80,100,65));
+        bricks.add(new Brick(240,80,130,65));
+        bricks.add(new Brick(720,80,100,65));
+        bricks.add(new Brick(528,80,130,65));
+        bricks.add(new Brick(80,207,97,32));
+        bricks.add(new Brick(720,207,97,32));
+        bricks.add(new Brick(338,207,224,32));
+        bricks.add(new Brick(428,207,40,128));
+        bricks.add(new Brick(624,207,32,224));
+        bricks.add(new Brick(240,207,32,224));
+        bricks.add(new Brick(240,304,128,32));
+        bricks.add(new Brick(528,304,128,32));
+        bricks.add(new Brick(432,0,32,144));
+        bricks.add(new Brick(0,0,894,16));
+
         for(int i=0; i<bricks.size(); i++){
             bricks.get(i).paint(window);
-            if(bricks.get(i).intersects(ball)){
-                ball.bounce();
-            }
         }
     }
 
