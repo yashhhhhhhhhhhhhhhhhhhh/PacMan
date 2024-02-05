@@ -1,0 +1,123 @@
+import java.util.*;
+
+public class BinarySearchTreeLab
+{
+   private Node root;
+   
+   //constructor
+   public BinarySearchTreeLab(){};
+   
+   //add method
+    public void add(int value) {
+        root = add( root, value);
+    }
+    private Node add( Node n, int value) {
+        if ( n == null) {
+            n = new Node(value, null, null);
+        }
+        else if ( n.data.compareTo(value)>0) {
+            n.left = add( n.left, value);
+        }
+        else if ( n.data.compareTo(value)<0) {
+            n.right = add( n.right, value);
+        }
+        return n;
+    }
+
+    public void remove(int value) {
+        root = remove( root, value);
+    }
+    private Node remove( Node n, int value) {
+            if (n.data.compareTo(value) == 0) {
+                if (n.left == null && n.right == null) {
+                    n = null;
+                    
+                }
+                else if (n.left != null) {
+                    n = n.left;
+                }
+                else if (n.right != null) {
+                    n = n.right;
+                }
+                else if (n.left != null && n.right != null) {
+                    n = n.right;
+                }
+            }
+            if (n.data.compareTo(value) > 0) {
+                n.left = remove(n.left, value);
+
+            }
+            if (n.data.compareTo(value) < 0) {
+                n.right = remove(n.right, value);
+            }
+        return n;
+    }
+
+
+    public void inOrder() {
+        inOrder(root);
+    }
+   private static void inOrder( Node n )
+   {
+      if( n != null)
+      {
+          inOrder( n.left );
+          System.out.print( n.data + " ");
+          inOrder( n.right );
+      }
+   }
+
+    public void preOrder() {
+        preOrder(root);
+    }
+    private static void preOrder( Node n )
+    {
+        if( n != null)
+        {
+            System.out.print( n.data + " ");
+            inOrder( n.left );
+            inOrder( n.right );
+        }
+    }
+
+    public void postOrder() {
+        postOrder(root);
+    }
+    private static void postOrder( Node n )
+    {
+        if( n != null)
+        {
+            inOrder( n.left );
+            inOrder( n.right );
+            System.out.print( n.data + " ");
+        }
+    }
+
+    public void revOrder() {
+        revOrder(root);
+    }
+    private static void revOrder( Node n )
+    {
+        if( n != null)
+        {
+            inOrder( n.right );
+            System.out.print( n.data + " ");
+            inOrder( n.left );
+        }
+    }
+
+	 /*
+	    70   -  add + traversals – inOrder, preorder, postOrder, revOrder
+	    
+        80   -  70  + remove, smallest, largest, find
+        
+        90   -  80  + sumNodes, countLeaves, levelOrder traversal [ use a Q ], and isBST [ is the tree a binary search tree ]
+        
+        100  -  90  + getHeight, getWidth, isFull, and isComplete
+        
+        110  -  100 + mirror [ return a new tree ] +  
+                    printem tree where it lookem like tree 
+                    
+    */
+
+}
